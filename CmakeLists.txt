@@ -1,23 +1,36 @@
-cmake_minimum_required(VERSION 3.15)
-project(libaff LANGUAGES C ASM_NASM) 
+cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON) 
+# Включаем поддержку языков: C и Ассемблер (ASM)
+# Если ты используешь NASM, замени ASM на ASM_NASM
+project(AFF_Archiver VERSION 1.0.0 LANGUAGES C ASM)
 
+# Устанавливаем стандарт C99 или C11 для чистого и строгого кода
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+
+# Настройки компилятора C: включаем все предупреждения для безопасной работы с памятью
 if(MSVC)
-add_compile_options(/O2 /Oi /arch:AVX2)
+    add_compile_options(/W4)
 else()
-add_compile_options(-O3 -mavx2)
-endif() 
+    add_compile_options(-Wall -Wextra -O2)
+endif()
 
+# Указываем CMake, где искать заголовочные файлы (инclude-директории)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# Формируем список исходных файлов проекта
+# Сюда входят твои Си-файлы и Ассемблерные исходники (.s или .asm)
 set(SOURCE_FILES
-src/aff_library.c
-src/aff_library.h
-src/aff_optimized.asm
-) 
+    src/rle.c
+    src/rle.h
+    src/main.c
+    # Раскомментируй строку ниже и укажи имя своего ассемблерного файла, когда добавишь его:
+    # src/crypto.s 
+)
 
-add_library(aff SHARED ${SOURCE_FILES})
-target_include_directories(aff PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src) 
+# Создаем исполняемый файл архиватора aff
+add_executable(aff ${SOURCE_FILES})
 
-add_executable(aff_test src/main.c)
-target_link_libraries(aff_test aff)
+# Выводим красивое сообщение в консоль при генерации проекта
+message(STATUS "AFF Archiver configured successfully with C and ASM support!")
