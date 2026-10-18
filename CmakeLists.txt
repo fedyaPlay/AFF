@@ -1,36 +1,38 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Включаем поддержку языков: C и Ассемблер (ASM)
-# Если ты используешь NASM, замени ASM на ASM_NASM
-project(AFF_Archiver VERSION 1.0.0 LANGUAGES C ASM)
+# Задаем имя проекта и включаем поддержку языков: Си и Ассемблер (ASM)
+# Примечание: если твой ассемблерный код написан для компилятора NASM,
+# замени "ASM" на "ASM_NASM"
+project(AFF_Archiver VERSION 1.1.0 LANGUAGES C ASM)
 
-# Устанавливаем стандарт C99 или C11 для чистого и строгого кода
+# Настройка строгого стандарта C99 для переносимости бинарных данных
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
-# Настройки компилятора C: включаем все предупреждения для безопасной работы с памятью
+# Оптимизация сборки: включаем режим O2 для максимальной скорости работы утилиты
 if(MSVC)
-    add_compile_options(/W4)
+    add_compile_options(/W4 /O2)
 else()
     add_compile_options(-Wall -Wextra -O2)
 endif()
 
-# Указываем CMake, где искать заголовочные файлы (инclude-директории)
+# Указываем путь к заголовочным файлам (чтобы компилятор видел rle.h и io.h)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# Формируем список исходных файлов проекта
-# Сюда входят твои Си-файлы и Ассемблерные исходники (.s или .asm)
+# Формируем полный список исходных файлов проекта
 set(SOURCE_FILES
     src/rle.c
     src/rle.h
+    src/io.c
+    src/io.h
     src/main.c
-    # Раскомментируй строку ниже и укажи имя своего ассемблерного файла, когда добавишь его:
-    # src/crypto.s 
+    # Сюда ты можешь дописать свой ассемблерный файл, когда будешь его компилировать, например:
+    # src/crypto.s
 )
 
-# Создаем исполняемый файл архиватора aff
+# Создаем финальный исполняемый файл архиватора под именем aff
 add_executable(aff ${SOURCE_FILES})
 
-# Выводим красивое сообщение в консоль при генерации проекта
-message(STATUS "AFF Archiver configured successfully with C and ASM support!")
+# Сообщение в консоль разработчика о том, что проект успешно готов к сборке
+message(STATUS "AFF Archiver configured with RLE, IO, and ASM support!")
