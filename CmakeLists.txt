@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.15)
+project(libaff LANGUAGES C ASM_NASM) 
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON) 
+
+if(MSVC)
+add_compile_options(/O2 /Oi /arch:AVX2)
+else()
+add_compile_options(-O3 -mavx2)
+endif() 
+
+set(SOURCE_FILES
+src/aff_library.c
+src/aff_library.h
+src/aff_optimized.asm
+) 
+
+add_library(aff SHARED ${SOURCE_FILES})
+target_include_directories(aff PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src) 
+
+add_executable(aff_test src/main.c)
+target_link_libraries(aff_test aff)
